@@ -10,6 +10,7 @@ Opciones:
     --fps N           cuadros por segundo (default 25)
     --res WxH         resolucion (default 1920x1080)
     --samples N       samples de Cycles (default 64)
+    --threshold F     umbral del sampling adaptativo (default 0.05)
     --size M          tamano al que se normaliza el metegol, en metros (default 2.2)
     --exposure EV     correccion de exposicion en pasos (default 0)
     --test            render rapido de 5 frames sueltos a media resolucion
@@ -44,6 +45,7 @@ def parse_args():
     p.add_argument("--fps", type=int, default=25)
     p.add_argument("--res", default="1920x1080")
     p.add_argument("--samples", type=int, default=64)
+    p.add_argument("--threshold", type=float, default=0.05)
     p.add_argument("--size", type=float, default=2.2)
     p.add_argument("--exposure", type=float, default=0.0)
     p.add_argument("--test", action="store_true")
@@ -400,7 +402,7 @@ def configure_render(args, total_frames):
     scene.cycles.device = "CPU"
     scene.cycles.samples = args.samples
     scene.cycles.use_adaptive_sampling = True
-    scene.cycles.adaptive_threshold = 0.05
+    scene.cycles.adaptive_threshold = args.threshold
     scene.cycles.use_denoising = True
     scene.cycles.denoiser = "OPENIMAGEDENOISE"
     scene.cycles.denoising_input_passes = "RGB_ALBEDO_NORMAL"

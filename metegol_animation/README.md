@@ -99,3 +99,26 @@ uno.
 - `encode_video.py` — junta la secuencia PNG en un MP4.
 - `make_proxy_metegol.py` — genera un metegol de prueba, para validar encuadre e
   iluminación sin el modelo real.
+
+## Tiempos medidos
+
+Medido en este contenedor: 4 núcleos (Xeon @ 2,10 GHz), sin GPU, sobre el
+metegol de prueba. Un modelo real, con más geometría y materiales, tarda más.
+
+| Resolución | Samples | Por frame | 250 frames (10 s) |
+|------------|---------|-----------|-------------------|
+| 1920×1080 | 32 | 95 s | 6,6 h |
+| 1920×1080 | 16 | 51 s | 3,5 h |
+| 1280×720  | 24 | 33 s | 2,3 h |
+
+Con OpenImageDenoise, **16 samples a 1080p ya salen limpios**: no se gana casi
+nada subiendo, y se paga el doble o el triple de tiempo. Es la configuración
+recomendada.
+
+Bajar los rebotes casi no ayuda (95 s → 86 s con `max_bounces` de 8 a 4): el
+costo está en el sampling, no en el transporte de luz. La profundidad de campo
+es prácticamente gratis (87,1 s con DOF contra 86,6 s sin DOF), así que no hay
+razón para desactivarla.
+
+En una máquina con GPU esto baja muchísimo. Si tenés GPU, en
+`configure_render()` cambiá `scene.cycles.device = "CPU"` por `"GPU"`.
